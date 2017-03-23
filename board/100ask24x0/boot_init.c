@@ -469,7 +469,7 @@ int CopyCode2Ram(unsigned long start_addr, unsigned char *buf, int size)
         /* 初始化NAND Flash */
 		nand_init_ll();
         /* 从 NAND Flash启动 */
-        nand_read_ll_lp(buf, start_addr, (size + NAND_BLOCK_MASK_LP)&~(NAND_BLOCK_MASK_LP));
+        nand_read_ll(buf, start_addr, (size + NAND_BLOCK_MASK)&~(NAND_BLOCK_MASK));
 		return 0;
     }
 }
