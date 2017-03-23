@@ -120,6 +120,16 @@ FIQ_STACK_START:
  */
 
 reset:
+
+	LDR	R0,=0x56000010
+	MOV	R1,#0x00015400
+	STR	R1,[R0]
+
+#if 1
+	LDR	R0,=0x56000014
+	MOV	R1,#0x000001C0  /* 1C0 1A0 160 E0 */
+	STR	R1,[R0]
+#endif
 	/*
 	 * set the cpu to SVC32 mode
 	 */
@@ -203,8 +213,11 @@ relocate:				/* relocate U-Boot to RAM	    */
 	ldr	r2, _armboot_start
 	ldr	r3, _bss_start
 	sub	r2, r3, r2		/* r2 <- size of armboot            */
+
+
 #if 1
 	bl  CopyCode2Ram	/* r0: source, r1: dest, r2: size */
+
 #else
 	add	r2, r0, r2		/* r2 <- source end address         */
 
@@ -235,6 +248,11 @@ SetLoadFlag:
 	mov r3, #1
 	streq r3, [r2]
 
+#if 1
+	LDR	R0,=0x56000014
+	MOV	R1,#0x00000160  /* 1C0 1A0 160 E0 */
+	STR	R1,[R0]
+#endif
 #if 0
 	/* try doing this stuff after the relocation */
 	ldr     r0, =pWTCON
@@ -256,6 +274,11 @@ SetLoadFlag:
 	/* END stuff after relocation */
 #endif
 
+#if 1
+	LDR	R0,=0x56000014
+	MOV	R1,#0x00000160  /* 1C0 1A0 160 E0 */
+	STR	R1,[R0]
+#endif
 	ldr	pc, _start_armboot
 
 _start_armboot:	.word start_armboot
@@ -275,6 +298,7 @@ _start_armboot:	.word start_armboot
 
 #ifndef CONFIG_SKIP_LOWLEVEL_INIT
 cpu_init_crit:
+
 	/*
 	 * flush v4 I/D caches
 	 */
@@ -298,7 +322,9 @@ cpu_init_crit:
 	 * find a lowlevel_init.S in your board directory.
 	 */
 	mov	ip, lr
+
 	bl	lowlevel_init
+
 	mov	lr, ip
 	mov	pc, lr
 #endif /* CONFIG_SKIP_LOWLEVEL_INIT */
